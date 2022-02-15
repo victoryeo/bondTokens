@@ -1,0 +1,9 @@
+/node_modules
+/build
+/artifacts
+/cache
+.env
+.env.development
+.env.production
+.secret.json
+/metadata
