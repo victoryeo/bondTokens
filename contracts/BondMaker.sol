@@ -10,6 +10,15 @@ contract BondMaker is BondMakerInterface {
     BondTokenFactory internal immutable BOND_TOKEN_FACTORY;
     uint8 internal immutable DECIMALS_OF_BOND;
 
+    struct BondInfo {
+        uint256 faceValue;
+        uint8 interval;
+        uint8 coupon;
+        uint256 maturity;
+        BondTokenInterface contractInstance;
+    }
+    mapping(bytes32 => BondInfo) internal _bonds;
+
     constructor(
       uint8 decimalsOfBond,
       BondTokenFactory bondTokenFactoryAddress
@@ -18,13 +27,30 @@ contract BondMaker is BondMakerInterface {
         BOND_TOKEN_FACTORY = bondTokenFactoryAddress;
     }
 
-    function registerNewBond(string calldata name, string calldata symbol, uint256 maturity) public override returns (bytes32, address) {
-        bytes32 bondID = "0x0001";
+    function registerNewBond(
+      string calldata name, 
+      string calldata symbol, 
+      uint256 faceValue,
+      uint8 interval,
+      uint8 coupon,
+      uint256 maturity
+    ) public override returns (bytes32, address) {
+        bytes32 bondID = generateBondID(maturity);
         BondTokenInterface bondTokenContract = _createNewBondToken(
             name,
             symbol,
             maturity
         );
+
+        _bonds[bondID] = BondInfo({ 
+          faceValue: faceValue, 
+          interval: interval,
+          coupon: coupon,
+          maturity: maturity, 
+          contractInstance: bondTokenContract});
+
+        emit LogRegisterNewBond(bondID, address(bondTokenContract), maturity);
+
         return (bondID, address(bondTokenContract));
     }
 
@@ -61,5 +87,17 @@ contract BondMaker is BondMakerInterface {
             bondTokenContract.mint(account, amount),
             "failed to mint bond token"
         );
+    }
+
+    /**
+     * @dev Returns a bond ID determined by this contract address, maturity
+     */
+    function generateBondID(uint256 maturity)
+        public
+        view
+        override
+        returns (bytes32 bondID)
+    {
+        return keccak256(abi.encodePacked(address(this), maturity));
     }
 }
