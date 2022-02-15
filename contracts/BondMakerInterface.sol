@@ -5,6 +5,11 @@ pragma solidity ^0.8.0;
 import "./BondTokenInterface.sol";
 
 interface BondMakerInterface {
+    event LogRegisterNewBond(
+        bytes32 indexed bondID,
+        address indexed bondTokenAddress,
+        uint256 indexed maturity
+    );
     event LogIssueNewBonds(
         uint256 indexed bondGroupID,
         address indexed issuer,
@@ -13,7 +18,10 @@ interface BondMakerInterface {
 
     function registerNewBond(
         string calldata name, 
-        string calldata symbol, 
+        string calldata symbol,
+        uint256 faceValue,
+        uint8 interval,
+        uint8 coupon, 
         uint256 maturity
     ) external
       returns (
@@ -26,4 +34,9 @@ interface BondMakerInterface {
         uint256 bondIDs,
         uint256 bondAmount
     ) external;
+
+    function generateBondID(uint256 maturity)
+        external
+        view
+      returns (bytes32 bondID);
 }
