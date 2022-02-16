@@ -11,7 +11,7 @@ interface BondMakerInterface {
         uint256 indexed maturity
     );
     event LogIssueNewBonds(
-        uint256 indexed bondGroupID,
+        bytes32 indexed bondID,
         address indexed issuer,
         uint256 amount
     );
@@ -30,8 +30,7 @@ interface BondMakerInterface {
         );
 
     function issueNewBonds(
-        BondTokenInterface bondTokenContract,
-        uint256 bondIDs,
+        bytes32 bondID,
         uint256 bondAmount
     ) external;
 
