@@ -16,6 +16,7 @@ contract BondMaker is BondMakerInterface {
         uint8 coupon;
         uint256 maturity;
         BondTokenInterface contractInstance;
+        uint8 bondType;
     }
     mapping(bytes32 => BondInfo) internal _bonds;
 
@@ -33,21 +34,26 @@ contract BondMaker is BondMakerInterface {
       uint256 faceValue,
       uint8 interval,
       uint8 coupon,
-      uint256 maturity
+      uint256 maturity,
+      uint8 bondType
     ) public override returns (bytes32, address) {
         bytes32 bondID = generateBondID(maturity);
+        
         BondTokenInterface bondTokenContract = _createNewBondToken(
+            bondType,
             name,
             symbol,
             maturity
         );
-
+        
         _bonds[bondID] = BondInfo({ 
           faceValue: faceValue, 
           interval: interval,
           coupon: coupon,
           maturity: maturity, 
-          contractInstance: bondTokenContract});
+          contractInstance: bondTokenContract,
+          bondType: bondType
+        });
 
         emit LogRegisterNewBond(bondID, address(bondTokenContract), maturity);
 
@@ -66,10 +72,15 @@ contract BondMaker is BondMakerInterface {
         emit LogIssueNewBonds(bondID, msg.sender, bondAmount);
     }
 
-    function _createNewBondToken(string calldata name, string calldata symbol, uint256 maturity)
+    function _createNewBondToken(
+      uint8 bondType,
+      string calldata name, 
+      string calldata symbol, 
+      uint256 maturity)
         internal
         returns (BondTokenInterface) {
         address bondAddress = BOND_TOKEN_FACTORY.createBondToken(
+            bondType,
             name,
             symbol,
             DECIMALS_OF_BOND,
