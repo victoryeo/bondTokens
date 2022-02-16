@@ -22,7 +22,8 @@ interface BondMakerInterface {
         uint256 faceValue,
         uint8 interval,
         uint8 coupon, 
-        uint256 maturity
+        uint256 maturity,
+        uint8 bondType
     ) external
       returns (
             bytes32 bondID,
