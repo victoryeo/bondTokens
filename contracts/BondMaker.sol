@@ -55,15 +55,15 @@ contract BondMaker is BondMakerInterface {
     }
 
     function issueNewBonds(
-        BondTokenInterface bondTokenContract,
-        uint256 bondIDs,
+        bytes32 bondID,
         uint256 bondAmount
     ) external override {
         require(bondAmount != 0, "the minting amount must be non-zero");
-        
+        BondTokenInterface bondTokenContract = _bonds[bondID].contractInstance;
+
         _mintBond(bondTokenContract, msg.sender, bondAmount);
         
-        emit LogIssueNewBonds(bondIDs, msg.sender, bondAmount);
+        emit LogIssueNewBonds(bondID, msg.sender, bondAmount);
     }
 
     function _createNewBondToken(string calldata name, string calldata symbol, uint256 maturity)
