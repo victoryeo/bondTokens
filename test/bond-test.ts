@@ -121,24 +121,38 @@ describe("bond maker", function () {
           const bondID = event.args[0]
           const bondTokenContract = event.args[1]
           const bondAmount = 1000
+          const transferAmount = 100
           const newIssue = await deployedBondMaker.issueNewBonds(
             bondID,
             bondAmount
           )
           const receipt2 = await newIssue.wait()
 
+          for (const event of receipt2.events) {
+            if (event.event !== undefined) {
+              console.log(`Event ${event.event} with args ${event.args}`);
+            }
+          }
+
+          console.log(wallet.address)
           console.log(customer.address)
           console.log(bondTokenContract)
 
-          const bondTokenInst = await deployedBondMaker.getBondToken(bondID)
-          console.log(bondTokenInst)
+          const bal1 = await deployedBondMaker.getBondTokenBalance(bondID, wallet.address);
+          const bal2 = await deployedBondMaker.getBondTokenBalance(bondID, customer.address);
+          console.log(bal1, bal2)
 
+          await deployedBondMaker.transferBond(bondID, customer.address, transferAmount);
+
+          const bal3 = await deployedBondMaker.getBondTokenBalance(bondID, customer.address);
+          console.log(bal3)
+          expect(bal3).to.equal(transferAmount)
         }
       }
     });
   });
 
-  describe("redeem bond", async () => {  
+  /* describe("redeem bond", async () => {  
 
     it("redeem bond before maturity", async () => {
       const newBond = await deployedBondMaker.registerNewBond(
@@ -168,8 +182,11 @@ describe("bond maker", function () {
           const receipt2 = await newIssue.wait()
 
           // burn the bond token
+
+          const bondTokenInst = await deployedBondMaker.getBondToken(bondID)
+          console.log(bondTokenInst)
         }
       }
     });
-  });
+  });*/
 })
