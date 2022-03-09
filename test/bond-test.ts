@@ -8,10 +8,11 @@ describe("bond maker", function () {
   let deployedBondMaker: Contract;
   let deployedBondTokenFactory: Contract;
   let wallet: SignerWithAddress;
+  let customer: SignerWithAddress;
 
   beforeEach(async () => {
     let contractInst:ContractFactory;
-    [wallet] = await ethers.getSigners();
+    [wallet, customer] = await ethers.getSigners();
     contractInst = await ethers.getContractFactory("BondTokenFactory");
     deployedBondTokenFactory = await contractInst.deploy();
     await deployedBondTokenFactory.deployed();
@@ -92,6 +93,81 @@ describe("bond maker", function () {
                                         //0x03e8 is hex value of 1000
             }
           }
+        }
+      }
+    });
+  });
+
+  describe("transfer bond", async () => {  
+
+    it("transfer bond to customer", async () => {
+      const newBond = await deployedBondMaker.registerNewBond(
+        "Test", 
+        "Test", 
+        1000,
+        1,
+        2,
+        9, //maturity
+        0
+      );
+      const receipt = await newBond.wait()
+
+      //console.log(newBond, " ----- ", receipt )
+
+      for (const event of receipt.events) {
+        if (event.event !== undefined) {
+          console.log(`Event ${event.event} with args ${event.args}`);
+
+          const bondID = event.args[0]
+          const bondTokenContract = event.args[1]
+          const bondAmount = 1000
+          const newIssue = await deployedBondMaker.issueNewBonds(
+            bondID,
+            bondAmount
+          )
+          const receipt2 = await newIssue.wait()
+
+          console.log(customer.address)
+          console.log(bondTokenContract)
+
+          const bondTokenInst = await deployedBondMaker.getBondToken(bondID)
+          console.log(bondTokenInst)
+
+        }
+      }
+    });
+  });
+
+  describe("redeem bond", async () => {  
+
+    it("redeem bond before maturity", async () => {
+      const newBond = await deployedBondMaker.registerNewBond(
+        "Test", 
+        "Test", 
+        1000,
+        1,
+        2,
+        9, //maturity
+        0
+      );
+      const receipt = await newBond.wait()
+
+      //console.log(newBond, " ----- ", receipt )
+
+      for (const event of receipt.events) {
+        if (event.event !== undefined) {
+          console.log(`Event ${event.event} with args ${event.args}`);
+
+          const bondID = event.args[0]
+          const bondTokenContract = event.args[1]
+          const bondAmount = 1000
+          const newIssue = await deployedBondMaker.issueNewBonds(
+            bondID,
+            bondAmount
+          )
+          const receipt2 = await newIssue.wait()
+
+          // burn the bond token
         }
       }
     });
