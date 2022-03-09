@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./BondTokenInterface.sol";
 
+import "hardhat/console.sol";
+
 contract BondToken is Ownable, BondTokenInterface, ERC20 {
     struct Frac128x128 {
         uint128 numerator;
@@ -24,6 +26,10 @@ contract BondToken is Ownable, BondTokenInterface, ERC20 {
     ) ERC20(name, symbol) {
       _decimals = decimals;
       _maturity = maturity;
+    }
+
+    function updateBondMaturity() public override onlyOwner {
+      _maturity = block.timestamp + _maturity * 52 weeks;
     }
 
     function mint(address account, uint256 amount)
@@ -111,6 +117,9 @@ contract BondToken is Ownable, BondTokenInterface, ERC20 {
      * @dev Use block.timestamp to get the current time
      */
     function _isExpired() internal view returns (bool) {
+        console.log("_isExpired");
+        console.log(block.timestamp);
+        console.log(_maturity);
         return !(block.timestamp < _maturity);
     }
 

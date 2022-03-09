@@ -31,11 +31,11 @@ contract BondMaker is BondMakerInterface {
     function registerNewBond(
       string calldata name, 
       string calldata symbol, 
-      uint256 faceValue,
-      uint8 interval,
-      uint8 coupon,
-      uint256 maturity,
-      uint8 bondType
+      uint256 faceValue,     // FV of bond tokens
+      uint8 interval,        // semi annual; 2 is one year, 4 is two year, etc
+      uint8 coupon,          // percent
+      uint256 maturity,      // years
+      uint8 bondType         // 0: vanilla or 1: option bond
     ) public override returns (bytes32, address) {
         bytes32 bondID = generateBondID(maturity);
         
@@ -62,11 +62,12 @@ contract BondMaker is BondMakerInterface {
 
     function issueNewBonds(
         bytes32 bondID,
-        uint256 bondAmount
+        uint256 bondAmount      // issue amount of bond tokens
     ) external override {
         require(bondAmount != 0, "the minting amount must be non-zero");
         BondTokenInterface bondTokenContract = _bonds[bondID].contractInstance;
 
+        _updateBondMaturity(bondTokenContract);
         _mintBond(bondTokenContract, msg.sender, bondAmount);
         
         emit LogIssueNewBonds(bondID, msg.sender, bondAmount);
@@ -87,6 +88,10 @@ contract BondMaker is BondMakerInterface {
             maturity
         );
         return BondTokenInterface(bondAddress);
+    }
+
+    function _updateBondMaturity(BondTokenInterface bondTokenContract) internal {
+      bondTokenContract.updateBondMaturity();
     }
 
     function _mintBond(

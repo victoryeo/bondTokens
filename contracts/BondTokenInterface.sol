@@ -7,6 +7,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 interface BondTokenInterface is IERC20 {
     event LogExpire(uint128 rateNumerator, uint128 rateDenominator, bool firstTime);
 
+    function updateBondMaturity() external;
+
     function mint(address account, uint256 amount) external returns (bool success);
 
     function expire(uint128 rateNumerator, uint128 rateDenominator)
