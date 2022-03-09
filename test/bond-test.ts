@@ -88,7 +88,8 @@ describe("bond maker", function () {
           for (const event of receipt2.events) {
             if (event.event !== undefined) {
               console.log(`Event ${event.event} with args ${event.args}`);
-              expect(event.args[2]).to.deep.include({"_hex":"0x03e8"})
+              expect(event.args[2]).to.deep.include({"_hex":"0x03e8"})  
+                                        //0x03e8 is hex value of 1000
             }
           }
         }
