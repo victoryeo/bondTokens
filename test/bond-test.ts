@@ -56,4 +56,43 @@ describe("bond maker", function () {
       }
     });
   });
+
+  describe("issue new bond", async () => {  
+
+    it("issue bond event contains issue amount", async () => {
+      const newBond = await deployedBondMaker.registerNewBond(
+        "Test", 
+        "Test", 
+        1000,
+        1,
+        2,
+        9, //maturity
+        0
+      );
+      const receipt = await newBond.wait()
+
+      //console.log(newBond, " ----- ", receipt )
+
+      for (const event of receipt.events) {
+        if (event.event !== undefined) {
+          console.log(`Event ${event.event} with args ${event.args}`);
+
+          const bondID = event.args[0]
+          const bondAmount = 1000
+          const newIssue = await deployedBondMaker.issueNewBonds(
+            bondID,
+            bondAmount
+          )
+          const receipt2 = await newIssue.wait()
+
+          for (const event of receipt2.events) {
+            if (event.event !== undefined) {
+              console.log(`Event ${event.event} with args ${event.args}`);
+              expect(event.args[2]).to.deep.include({"_hex":"0x03e8"})
+            }
+          }
+        }
+      }
+    });
+  });
 })
