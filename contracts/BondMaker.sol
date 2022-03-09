@@ -78,12 +78,20 @@ contract BondMaker is BondMakerInterface {
 
     function transferBond( 
         bytes32 bondID,       
-        address account,
+        address toAccount,
         uint256 amount
     ) external {
-        require(amount != 0, "the transfer amount must be non-zero");
+        console.log('transferBond');
+        console.log(msg.sender);
+        require(amount > 0, "the transfer amount must be greater than zero");
         BondTokenInterface bondTokenContract = _bonds[bondID].contractInstance;
-        _transferBond(bondTokenContract, account, amount);
+        _transferBond(bondTokenContract, msg.sender, toAccount, amount);
+    }
+
+    function getBondTokenBalance(bytes32 bondID, address account) external view 
+        returns (uint256) {
+      BondTokenInterface bondTokenContract = _bonds[bondID].contractInstance;
+      return bondTokenContract.balanceOf(account);
     }
 
     function getBondToken(bytes32 bondID) external view returns (BondTokenInterface) {
@@ -110,11 +118,12 @@ contract BondMaker is BondMakerInterface {
 
     function _transferBond(
         BondTokenInterface bondTokenContract,
-        address account,
+        address fromAccount,
+        address toAccount,
         uint256 amount
     ) internal {
         require(
-            bondTokenContract.transfer(account, amount),
+            bondTokenContract.transferFrom(fromAccount, toAccount, amount),
             "failed to transfer bond token"
         );
     }
