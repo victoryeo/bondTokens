@@ -67,6 +67,7 @@ contract BondMaker is BondMakerInterface {
         require(bondAmount != 0, "the minting amount must be non-zero");
         BondTokenInterface bondTokenContract = _bonds[bondID].contractInstance;
 
+        // update bond maturity to solidity time unit
         _updateBondMaturity(bondTokenContract);
         _mintBond(bondTokenContract, msg.sender, bondAmount);
         
