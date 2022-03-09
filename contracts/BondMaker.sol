@@ -6,6 +6,8 @@ import "./BondTokenInterface.sol";
 import "./BondMakerInterface.sol";
 import "./BondTokenFactory.sol";
 
+import "hardhat/console.sol";
+
 contract BondMaker is BondMakerInterface {
     BondTokenFactory internal immutable BOND_TOKEN_FACTORY;
     uint8 internal immutable DECIMALS_OF_BOND;
@@ -74,6 +76,21 @@ contract BondMaker is BondMakerInterface {
         emit LogIssueNewBonds(bondID, msg.sender, bondAmount);
     }
 
+    function transferBond( 
+        bytes32 bondID,       
+        address account,
+        uint256 amount
+    ) external {
+        require(amount != 0, "the transfer amount must be non-zero");
+        BondTokenInterface bondTokenContract = _bonds[bondID].contractInstance;
+        _transferBond(bondTokenContract, account, amount);
+    }
+
+    function getBondToken(bytes32 bondID) external view returns (BondTokenInterface) {
+      console.log("getBondToken");
+      return _bonds[bondID].contractInstance;
+    }
+
     function _createNewBondToken(
       uint8 bondType,
       string calldata name, 
@@ -89,6 +106,17 @@ contract BondMaker is BondMakerInterface {
             maturity
         );
         return BondTokenInterface(bondAddress);
+    }
+
+    function _transferBond(
+        BondTokenInterface bondTokenContract,
+        address account,
+        uint256 amount
+    ) internal {
+        require(
+            bondTokenContract.transfer(account, amount),
+            "failed to transfer bond token"
+        );
     }
 
     function _updateBondMaturity(BondTokenInterface bondTokenContract) internal {
