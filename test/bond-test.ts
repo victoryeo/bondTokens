@@ -152,7 +152,7 @@ describe("bond maker", function () {
     });
   });
 
-  /* describe("redeem bond", async () => {  
+  describe("redeem bond", async () => {  
 
     it("redeem bond before maturity", async () => {
       const newBond = await deployedBondMaker.registerNewBond(
@@ -175,6 +175,7 @@ describe("bond maker", function () {
           const bondID = event.args[0]
           const bondTokenContract = event.args[1]
           const bondAmount = 1000
+          const burnAmount = 100;
           const newIssue = await deployedBondMaker.issueNewBonds(
             bondID,
             bondAmount
@@ -182,11 +183,14 @@ describe("bond maker", function () {
           const receipt2 = await newIssue.wait()
 
           // burn the bond token
-
-          const bondTokenInst = await deployedBondMaker.getBondToken(bondID)
-          console.log(bondTokenInst)
+          const bal1 = await deployedBondMaker.getBondTokenBalance(bondID, wallet.address);
+          console.log(bal1);
+          await deployedBondMaker.burnBond(bondID, wallet.address,burnAmount);
+          const bal3 = await deployedBondMaker.getBondTokenBalance(bondID, wallet.address);
+          console.log(bal3);
+          expect(bal3).to.equal(bondAmount-burnAmount);
         }
       }
     });
-  });*/
+  });
 })
