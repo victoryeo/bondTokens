@@ -88,14 +88,26 @@ contract BondMaker is BondMakerInterface {
         _transferBond(bondTokenContract, msg.sender, toAccount, amount);
     }
 
+    function burnBond( 
+        bytes32 bondID,       
+        address account,
+        uint256 amount
+    ) external {
+        console.log('burnBond');
+        console.log(msg.sender);
+        require(amount > 0, "the burn amount must be greater than zero");
+        BondTokenInterface bondTokenContract = _bonds[bondID].contractInstance;
+        _burnBond(bondTokenContract, account, amount);
+    }
+
     function getBondTokenBalance(bytes32 bondID, address account) external view 
         returns (uint256) {
       BondTokenInterface bondTokenContract = _bonds[bondID].contractInstance;
       return bondTokenContract.balanceOf(account);
     }
 
-    function getBondToken(bytes32 bondID) external view returns (BondTokenInterface) {
-      console.log("getBondToken");
+    function getBondTokenInstance(bytes32 bondID) external view returns (BondTokenInterface) {
+      console.log("getBondTokenInstance");
       return _bonds[bondID].contractInstance;
     }
 
@@ -114,6 +126,17 @@ contract BondMaker is BondMakerInterface {
             maturity
         );
         return BondTokenInterface(bondAddress);
+    }
+
+    function _burnBond(
+        BondTokenInterface bondTokenContract,
+        address account,
+        uint256 amount
+    ) internal {
+        require(
+            bondTokenContract.simpleBurn(account, amount),
+            "failed to burn bond token"
+        );
     }
 
     function _transferBond(
