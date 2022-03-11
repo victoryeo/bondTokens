@@ -2,28 +2,30 @@ import Web3 from 'web3';
 
 import HDWalletProvider from '@truffle/hdwallet-provider'
 import * as dotenv from "dotenv";
-import {resolve} from 'path'
 import { TransactionReceipt } from "web3-core"
-import util from 'util'
 
 dotenv.config();
 
 const { mnemonic, api_key } = require('../.secret.json');
 
-const RPC = `https://rpc-mumbai.maticvigil.com/v1/${api_key}`;
+const rinkeby_RPC = `https://eth-rinkeby.alchemyapi.io/v2/${api_key}`
 
-const provider = new HDWalletProvider(mnemonic, RPC);
+const provider = new HDWalletProvider(mnemonic, rinkeby_RPC);
   
 const web3 = new Web3(provider);
 
-const bondMakerContract = require("../artifacts/contracts/BondMaker.sol/BondMaker.json");
+const BondTokenFactory = require("../artifacts/contracts/BondTokenFactory.sol/BondTokenFactory.json");
 
-// nft contract address
-const testContAddress = process.env.CONTRACT_ADDRESS;
-console.log(testContAddress)
+const BondMaker = require("../artifacts/contracts/BondMaker.sol/BondMaker.json");
+
+// contract address
+const testFactoryAddress = process.env.FACTORY_CONTRACT_ADDRESS;
+console.log(testFactoryAddress)
+const testMakerAddress = process.env.MAKER_CONTRACT_ADDRESS;
+console.log(testMakerAddress)
 
 let contInst = new web3.eth.Contract(
-  bondMakerContract.abi, testContAddress
+  BondTokenFactory.abi, testFactoryAddress
 )
 
 async function bondSC(baseURI:string) {
