@@ -7,7 +7,8 @@ async function main() {
   console.log((testFactoryInstance.deployTransaction.gasLimit))
 
   const testMaker = await ethers.getContractFactory('BondMaker');
-	const testMakerInstance = await testMaker.deploy(18, testFactoryInstance.address);
+  // use 1 decimal instead of 18 decimal point
+	const testMakerInstance = await testMaker.deploy(1, testFactoryInstance.address);
 	console.log('Maker Contract deployed to address:', testMakerInstance.address);
   console.log((testMakerInstance.deployTransaction.gasLimit))
 }
