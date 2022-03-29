@@ -21,11 +21,17 @@ contract BondToken is Ownable, BondTokenInterface, ERC20 {
     constructor(
         string memory name,
         string memory symbol,
-        uint8 decimals,
+        uint8 __decimals,
         uint256 maturity
     ) ERC20(name, symbol) {
-      _decimals = decimals;
+      _decimals = __decimals;
       _maturity = maturity;
+    }
+
+    // override decimals method so that contract decimal value 
+    // can be changed
+    function decimals() public view virtual override returns (uint8) {
+        return _decimals;
     }
 
     function updateBondMaturity() public override onlyOwner {
