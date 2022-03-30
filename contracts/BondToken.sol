@@ -46,13 +46,13 @@ contract BondToken is Ownable, BondTokenInterface, ERC20 {
         returns (bool success)
     {
         require(!_isExpired(), "this bond token contract has expired");
-        _mint(account, amount);
+        _mint(account, amount * (10 ** (_decimals)));
 
         // after minting, add the allowance
         _approve(
             account,
             msg.sender,
-            amount
+            amount * (10 ** (_decimals))
         );
 
         return true;
@@ -65,7 +65,7 @@ contract BondToken is Ownable, BondTokenInterface, ERC20 {
     {
         console.log("transfer");
         console.log(msg.sender);
-        _transfer(msg.sender, recipient, amount);
+        _transfer(msg.sender, recipient, amount * (10 ** (_decimals)));
         return true;
     }
 
@@ -80,13 +80,13 @@ contract BondToken is Ownable, BondTokenInterface, ERC20 {
         uint256 currentAllowance = allowance(sender, msg.sender);
         console.log(currentAllowance);
 
-        _transfer(sender, recipient, amount);
+        _transfer(sender, recipient, amount * (10 ** (_decimals)));
 
         // after transfer, reduce the allowance
         _approve(
             sender,
             msg.sender,
-            currentAllowance - amount
+            currentAllowance - amount * (10 ** (_decimals))
         );
 
         currentAllowance = allowance(sender, msg.sender);
