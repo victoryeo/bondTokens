@@ -118,7 +118,7 @@ contract BondToken is Ownable, BondTokenInterface, ERC20 {
             return false;
         }
 
-        _burn(from, amount);
+        _burn(from, amount * (10 ** (_decimals)));
         return true;
     }
 
@@ -127,7 +127,7 @@ contract BondToken is Ownable, BondTokenInterface, ERC20 {
             return false;
         }
 
-        _burn(msg.sender, amount);
+        _burn(msg.sender, amount * (10 ** (_decimals)));
 
         return true;
     }
