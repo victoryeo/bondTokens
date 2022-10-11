@@ -2,4 +2,5 @@
 bond tokens using ERC20 standard 
 
 #### deploy contract to Ethereum Rinkeby network
+npx hardhat run scripts/deploy.ts  --network goerli
 npx hardhat run scripts/deploy.ts  --network rinkeby
