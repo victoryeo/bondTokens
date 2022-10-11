@@ -13,6 +13,7 @@ task('accounts', 'Prints the list of accounts', async (args, hre) => {
 
 const { mnemonic, api_key } = require('./.secret.json');
 const rinkebyUrl = `https://eth-rinkeby.alchemyapi.io/v2/${api_key}`;
+const goerliUrl = `https://eth-goerli.g.alchemy.com/v2/${api_key}`;
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
@@ -34,6 +35,11 @@ export default {
 		},
     rinkeby: {
       url: rinkebyUrl,
+      accounts: { mnemonic: mnemonic },
+      gas: 4612388 // Gas limit used for deploys
+    },
+		goerli: {
+		  url: goerliUrl,
       accounts: { mnemonic: mnemonic },
       gas: 4612388 // Gas limit used for deploys
     },
