@@ -29,7 +29,9 @@ contract BondTest is TestSetup {
         uint256 amount
     );
 
-    bytes32 bondId = 0xe2b750b2b32fa7a69ce6801c3ccb603a2524a4cdbbcfb85ae9a4d02e6f8414b5;
+    // can obtain the bond id from 
+    // forge test -vvvv
+    bytes32 bondId = 0xff4172fa271937340825c79e87b121467861836a4645de0bbec56ff53ffddfae;
 
     address internal owner = address(0x1);
 
@@ -45,4 +47,12 @@ contract BondTest is TestSetup {
         10/*maturity*/,0);
     }
 
+    function testIssueBond() public {
+      bondMaker.registerNewBond("Testname","Testsymbol",100,1,4,10,0);
+      // only check amount
+      vm.expectEmit(true,false,false,true);
+      emit LogIssueNewBonds(bondId, owner, 1000);
+      console.logBytes32((bondId));
+      bondMaker.issueNewBonds(bondId, 1000);
+    }
 }
