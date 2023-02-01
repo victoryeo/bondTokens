@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
+import {console} from "forge-std/console.sol";
 import {BondTokenFactory} from "../../contracts/BondTokenFactory.sol";
 import {BondMaker} from "../../contracts/BondMaker.sol";
 
@@ -28,7 +29,9 @@ contract BondTest is TestSetup {
         uint256 amount
     );
 
-    bytes32 bondId = 0x7465737400000000000000000000000000000000000000000000000000000000;
+    bytes32 bondId = 0xe2b750b2b32fa7a69ce6801c3ccb603a2524a4cdbbcfb85ae9a4d02e6f8414b5;
+
+    address internal owner = address(0x1);
 
     function setUp() public override {
        super.setUp();
@@ -37,8 +40,9 @@ contract BondTest is TestSetup {
     function testRegisterBond() public {
       // only check the maturity
       vm.expectEmit(false,false,true,false); 
-      emit LogRegisterNewBond(bondId,address(0), 10);
+      emit LogRegisterNewBond(bondId, owner, 10);
       bondMaker.registerNewBond("Testname","Testsymbol",100,1,4,
         10/*maturity*/,0);
     }
+
 }
