@@ -1,6 +1,7 @@
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
 import { task, HardhatUserConfig } from 'hardhat/config';
+import '@nomiclabs/hardhat-etherscan';
 
 // see https://hardhat.org/guides/create-task.html
 task('accounts', 'Prints the list of accounts', async (args, hre) => {
@@ -11,14 +12,22 @@ task('accounts', 'Prints the list of accounts', async (args, hre) => {
 	}
 });
 
-const { mnemonic, api_key } = require('./.secret.json');
-const rinkebyUrl = `https://eth-rinkeby.alchemyapi.io/v2/${api_key}`;
-const goerliUrl = `https://eth-goerli.g.alchemy.com/v2/${api_key}`;
+const { mnemonic, 
+	alchemy_api_key, 
+	etherscan_api_key 
+} = require('./.secret.json');
+const rinkebyUrl = `https://eth-rinkeby.alchemyapi.io/v2/${alchemy_api_key}`;
+const goerliUrl = `https://eth-goerli.g.alchemy.com/v2/${alchemy_api_key}`;
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
 export default {
+	etherscan: {
+		apiKey: {
+			goerli: etherscan_api_key
+		}
+	},
 	solidity: {
 		version: '0.8.0',
 		settings: {
@@ -41,7 +50,7 @@ export default {
 		goerli: {
 		  url: goerliUrl,
       accounts: { mnemonic: mnemonic },
-      gas: 4612388 // Gas limit used for deploys
+      gas: 9612388 // Gas limit used for deploys
     },
 		hardhat: {},
 	},
